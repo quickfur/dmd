@@ -53,7 +53,7 @@ Global global;
 Global::Global()
 {
     mars_ext = "d";
-    sym_ext  = "d";
+    sym_ext  = "ds";
     hdr_ext  = "di";
     doc_ext  = "html";
     ddoc_ext = "ddoc";
@@ -359,7 +359,8 @@ Usage:\n\
 #if TARGET_LINUX || TARGET_OSX || TARGET_FREEBSD || TARGET_OPENBSD || TARGET_SOLARIS
 "  -shared        generate shared library\n"
 #endif
-"  -unittest      compile in unit tests\n\
+"  -sym           generate symfiles ('preprocessed' .ds files)\n\
+  -unittest      compile in unit tests\n\
   -v             verbose\n\
   -version=level compile in version code >= level\n\
   -version=ident compile in version code identified by ident\n\
@@ -678,6 +679,8 @@ int tryMain(int argc, char *argv[])
                 global.params.ignoreUnsupportedPragmas = 1;
             else if (strcmp(p + 1, "property") == 0)
                 global.params.enforcePropertySyntax = 1;
+            else if (strcmp(p + 1, "sym") == 0)
+                global.params.genSymFiles = 1;
             else if (strcmp(p + 1, "inline") == 0)
                 global.params.useInline = 1;
             else if (strcmp(p + 1, "lib") == 0)
@@ -1359,6 +1362,15 @@ int tryMain(int argc, char *argv[])
     // Do not attempt to generate output files if errors or warnings occurred
     if (global.errors || global.warnings)
         fatal();
+
+    if (global.params.genSymFiles)
+    {
+        for (size_t i = 0; i < modules.dim; i++)
+        {                                   
+            m = modules[i];               
+            m->gensymfile();              
+        }                                                                                                
+    }
 
     printCtfePerformanceStats();
 
