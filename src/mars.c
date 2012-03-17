@@ -1363,15 +1363,6 @@ int tryMain(int argc, char *argv[])
     if (global.errors || global.warnings)
         fatal();
 
-    if (global.params.genSymFiles)
-    {
-        for (size_t i = 0; i < modules.dim; i++)
-        {                                   
-            m = modules[i];               
-            m->gensymfile();              
-        }                                                                                                
-    }
-
     printCtfePerformanceStats();
 
     Library *library = NULL;
@@ -1389,6 +1380,15 @@ int tryMain(int argc, char *argv[])
     }
 
     // Generate output files
+
+    if (global.params.genSymFiles)
+    {
+        for (size_t i = 0; i < modules.dim; i++)
+        {                                   
+            m = modules[i];               
+            m->gensymfile();              
+        }                                                                                                
+    }
 
     if (global.params.doXGeneration)
         json_generate(&modules);
